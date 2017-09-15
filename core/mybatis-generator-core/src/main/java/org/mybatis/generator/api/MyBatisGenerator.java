@@ -40,6 +40,8 @@ import org.mybatis.generator.internal.NullProgressCallback;
 import org.mybatis.generator.internal.ObjectFactory;
 import org.mybatis.generator.internal.XmlFileMergerJaxp;
 
+import javax.xml.transform.Source;
+
 /**
  * This class is the main interface to MyBatis generator. A typical execution of the tool involves these steps:
  * 
@@ -186,6 +188,7 @@ public class MyBatisGenerator {
     public void generate(ProgressCallback callback, Set<String> contextIds,
             Set<String> fullyQualifiedTableNames) throws SQLException,
             IOException, InterruptedException {
+        System.out.println("heiheihei");
         generate(callback, contextIds, fullyQualifiedTableNames, true);
     }
 
@@ -218,6 +221,7 @@ public class MyBatisGenerator {
             Set<String> fullyQualifiedTableNames, boolean writeFiles) throws SQLException,
             IOException, InterruptedException {
 
+        System.out.println("aaaaaaaaaaaaa");
         if (callback == null) {
             callback = new NullProgressCallback();
         }
@@ -240,8 +244,10 @@ public class MyBatisGenerator {
             }
         }
 
+        System.out.println("before------------");
         // setup custom classloader if required
         if (configuration.getClassPathEntries().size() > 0) {
+            System.out.println("entity:" + configuration.getClassPathEntries());
             ClassLoader classLoader = getCustomClassloader(configuration.getClassPathEntries());
             ObjectFactory.addExternalClassLoader(classLoader);
         }
@@ -293,6 +299,7 @@ public class MyBatisGenerator {
         callback.done();
     }
 
+    //写Java文件，包括实体，dao接口
     private void writeGeneratedJavaFile(GeneratedJavaFile gjf, ProgressCallback callback)
             throws InterruptedException, IOException {
         File targetFile;
@@ -331,13 +338,17 @@ public class MyBatisGenerator {
         }
     }
 
+    //写xml文件
     private void writeGeneratedXmlFile(GeneratedXmlFile gxf, ProgressCallback callback)
             throws InterruptedException, IOException {
         File targetFile;
         String source;
         try {
+            //获取生成文件的目录
             File directory = shellCallback.getDirectory(gxf
                     .getTargetProject(), gxf.getTargetPackage());
+
+            //根据目录和文件名称生成目标文件的File对象
             targetFile = new File(directory, gxf.getFileName());
             if (targetFile.exists()) {
                 if (gxf.isMergeable()) {
@@ -361,6 +372,7 @@ public class MyBatisGenerator {
             callback.checkCancel();
             callback.startTask(getString(
                     "Progress.15", targetFile.getName())); //$NON-NLS-1$
+            //将内容写到目标文件中
             writeFile(targetFile, source, "UTF-8"); //$NON-NLS-1$
         } catch (ShellException e) {
             warnings.add(e.getMessage());

@@ -116,6 +116,7 @@ public interface ShellCallback {
      * 
      * @param project
      *            the project to be refreshed
+     *            刷新idea，让新生成的文件显示出来
      */
     void refreshProject(String project);
 

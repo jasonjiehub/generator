@@ -27,10 +27,10 @@ public class GeneratedXmlFile extends GeneratedFile {
     /** The document. */
     private Document document;
 
-    /** The file name. */
+    /** The file name. 这是生成的mapper文件的名称*/
     private String fileName;
 
-    /** The target package. */
+    /** The target package. 这是在generatorConfig.xml文件中配置的xml文件生成的目录*/
     private String targetPackage;
 
     /** The is mergeable. */

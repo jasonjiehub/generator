@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import com.google.common.base.Joiner;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -85,6 +86,7 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
      * Specifies whether the mojo overwrites existing Java files. Default is false.
      * <br>
      * Note that XML files are always merged.
+     * 是否覆写当前已经生成的文件
      */
     @Parameter(property = "mybatis.generator.overwrite", defaultValue = "false")
     private boolean overwrite;
@@ -93,12 +95,15 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
      * Location of a SQL script file to run before generating code. If null,
      * then no script will be run. If not null, then jdbcDriver, jdbcURL must be
      * supplied also, and jdbcUserId and jdbcPassword may be supplied.
+     * 插件执行的时候可以执行的一个sql脚本文件
+     * mybatis-generator-systests-ibatis2-java2项目在配置的时候传入了这些参数
      */
     @Parameter(property = "mybatis.generator.sqlScript")
     private String sqlScript;
 
     /**
      * JDBC Driver to use if a sql.script.file is specified.
+     * 默认值为：com.mysql.jdbc.Driver
      */
     @Parameter(property = "mybatis.generator.jdbcDriver")
     private String jdbcDriver;
@@ -154,9 +159,10 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
      */
     @Parameter(property = "mybatis.generator.includeAllDependencies", defaultValue = "false")
     private boolean includeAllDependencies;
-    
+
     @Override
     public void execute() throws MojoExecutionException {
+        System.out.println("execute start");
         if (skip) {
             getLog().info("MyBatis generator is skipped.");
             return;
@@ -176,7 +182,9 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
         List<String> resourceDirectories = new ArrayList<String>();
         for (Resource resource: resources) {
             resourceDirectories.add(resource.getDirectory());
+            System.out.println("resource:" + resource.getDirectory());
         }
+        //这里配置的应该是关于resources目录下的xml资源文件的classLoader
         ClassLoader cl = ClassloaderUtility.getCustomClassloader(resourceDirectories);
         ObjectFactory.addExternalClassLoader(cl);
 
@@ -192,7 +200,7 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
                     "RuntimeError.1", configurationFile.toString())); //$NON-NLS-1$
         }
 
-        runScriptIfNecessary();
+        //如果插件参数中配置了sql脚本文件，则需要执行这个脚本来对数据库做一些操作
 
         Set<String> fullyqualifiedTables = new HashSet<String>();
         if (StringUtility.stringHasValue(tableNames)) {
@@ -226,9 +234,10 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config,
                     callback, warnings);
 
+            System.out.println("mybatis");
             myBatisGenerator.generate(new MavenProgressCallback(getLog(),
                     verbose), contextsToRun, fullyqualifiedTables);
-
+            System.out.println("generate over");
         } catch (XMLParserException e) {
             for (String error : e.getErrors()) {
                 getLog().error(error);
@@ -247,8 +256,12 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
             throw new MojoExecutionException(e.getMessage());
         } catch (InterruptedException e) {
             // ignore (will never happen with the DefaultShellCallback)
+            System.out.println("intrupt------------");
         }
 
+        System.out.println("1111111111111111111111111111");
+        runScriptIfNecessary();
+        System.out.println("2222222222222222222222222222");
         for (String error : warnings) {
             getLog().warn(error);
         }
@@ -301,6 +314,7 @@ public class MyBatisGeneratorMojo extends AbstractMojo {
             return;
         }
 
+        System.out.println("3333333333333333333333333");
         SqlScriptRunner scriptRunner = new SqlScriptRunner(sqlScript,
                 jdbcDriver, jdbcURL, jdbcUserId, jdbcPassword);
         scriptRunner.setLog(getLog());

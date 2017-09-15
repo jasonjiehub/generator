@@ -33,6 +33,7 @@ public class MavenProgressCallback extends NullProgressCallback {
         super();
         this.log = log;
         this.verbose = verbose;
+        System.out.println("callback");
     }
 
     @Override

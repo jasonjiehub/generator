@@ -22,7 +22,9 @@ package org.mybatis.generator.api;
  */
 public abstract class GeneratedFile {
 
-    /** The target project. */
+    /** The target project.
+     * 这是在generatorConfig.xml文件中配置的xml文件生成的工程,一般是src/main/java或者src/main/resources
+     */
     protected String targetProject;
 
     /**

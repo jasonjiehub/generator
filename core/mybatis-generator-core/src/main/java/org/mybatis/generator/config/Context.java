@@ -507,6 +507,7 @@ public class Context extends PropertyHolder {
             }
         }
 
+        //introspectedTables里面存的是数据库表结构信息
         if (introspectedTables != null) {
             for (IntrospectedTable introspectedTable : introspectedTables) {
                 callback.checkCancel();

@@ -80,7 +80,7 @@ public class SqlScriptRunner {
         try {
             Class<?> driverClass = ObjectFactory.externalClassForName(driver);
             Driver theDriver = (Driver) driverClass.newInstance();
-            
+            System.out.println("4444444444444444444444444444");
             Properties properties = new Properties();
             if (userid != null) {
                 properties.setProperty("user", userid);
@@ -92,17 +92,18 @@ public class SqlScriptRunner {
             
             connection = theDriver.connect(url, properties);
             connection.setAutoCommit(false);
-
+            System.out.println("55555555555555555555555555555");
             Statement statement = connection.createStatement();
+            System.out.println("66666666666666666666666666");
 
             BufferedReader br = getScriptReader();
 
             String sql;
-
+            System.out.println("777777777777777777777");
             while ((sql = readStatement(br)) != null) {
                 statement.execute(sql);
             }
-
+            System.out.println("888888888888888888888888");
             closeStatement(statement);
             connection.commit();
             br.close();
@@ -201,7 +202,10 @@ public class SqlScriptRunner {
         
         if (sourceFile.startsWith("classpath:")) {
             String resource = sourceFile.substring("classpath:".length());
+            System.out.println("resource:" + resource);
+            //应该是classLoader还没有载入script.sql这个文件，所以从classLoader里面找不到这个资源
             URL url = ObjectFactory.getResource(resource);
+            System.out.println("url:" + url);
             InputStream is = url.openStream();
             if (is == null) {
                 throw new MojoExecutionException("SQL script file does not exist: " + resource);

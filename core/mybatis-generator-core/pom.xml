@@ -72,6 +72,7 @@
               <mainClass>org.mybatis.generator.api.ShellRunner</mainClass>
             </manifest>
           </archive>
+
         </configuration>
       </plugin>
       <plugin>
